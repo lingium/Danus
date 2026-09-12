@@ -10,18 +10,19 @@
 > On a fresh deployment this is the blank template — the `initialize` skill fills it.
 
 ## Operator
-- **Name / how to address:** _(ask once; fill in)_
-- **Language:** _(the language the main agent replies in; code/comments/skills stay English)_
-- **Timezone:** _(for scheduling summaries)_
+- **Name / how to address:** 凌志
+- **Language:** 中文
+- **Timezone:** 未指定（当前部署环境为 UTC）
 
 ## Standing preferences
-- **Notifications:** _(how/where to reach them; what severity warrants a ping)_
-- **Spend ceiling (paid backend API):** _(USD; warn before crossing)_
-- **worker roster:** _(default `high:3,xhigh:4` — 3 high + 4 xhigh; asked per project at `danus new`)_
+- **Notifications:** 未指定
+- **Spend ceiling (paid backend API):** 不适用（使用 ChatGPT subscription 后端）
+- **worker roster:** `high:3,xhigh:4`（每个项目在 `danus new` 时确认）
 
 ## Per-project pointers
 _(One line per live project → where its durable facts live. The project's own
 problem lives under `runtime/projects/<project>/PROBLEM.md`, not here.)_
 
 ## Notes
-_(Anything else durable the operator told you: conventions, do/don't, contacts.)_
+- Codex backend：自己的 ChatGPT subscription。
+- Git 工作分支：`deploy/lingzhi`。

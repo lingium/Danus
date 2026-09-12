@@ -54,7 +54,7 @@ graph.
 
 All three codex-exec sites (workers, verifier, paper/report renderers) resolve
 binary + model + effort through the shared launcher, so names are unified. Neutral
-defaults apply everywhere; per-service overrides win.
+defaults apply to these background processes; per-service overrides win.
 
 | variable | default | applies to |
 |---|---|---|
@@ -69,6 +69,31 @@ defaults apply everywhere; per-service overrides win.
 The primary knobs are `DANUS_MAIN_MODEL` / `DANUS_MAIN_EFFORT`; the older
 `DANUS_CODEX_MODEL` / `DANUS_CODEX_EFFORT` names are still honored as back-compat
 aliases.
+
+### Interactive main agent
+
+`bin/codex` uses `.codex/config.toml` for the interactive main agent's `model`,
+`review_model` (the `/review` model), and `model_reasoning_effort`. Explicit CLI
+options take precedence. The wrapper does not inject the background defaults
+into interactive sessions. `DANUS_MAIN_*` retains its historical name but sets
+the neutral defaults for Danus-spawned background `exec` calls through
+`danus.codex`; those calls explicitly pass both model and effort.
+
+On macOS, `bin/codex` uses the host CLI with an isolated
+`runtime/codex-home`. It calculates the repository trust entry and the
+`danus-only` profile's workspace root at launch. Keep permission rules in that
+home's `config.toml`; do not hardcode a deployment path there.
+On first setup, `scripts/bootstrap-mac.sh` copies
+`config/codex-home.config.toml.example` into that home. The template selects
+`danus-only`, keeps `approval_policy = "never"` and Homebrew read access, and
+contains no model settings or deployment paths. Existing configurations are
+preserved when bootstrap is rerun. Path refreshes preserve unrelated tables
+written by Codex, including UI state.
+`runtime/runtime.env` expands repository paths from `$DANUS_ROOT` when sourced.
+An unavailable configured venv is an error, rather than a fallback to Conda or
+system Python. A Python venv itself is not portable: after moving the repository,
+rerun `bash scripts/bootstrap-mac.sh` to rebuild its entry points and editable
+install. The previous environment is preserved as `runtime/venv.before-move-*`.
 
 ## Ports (all loopback)
 

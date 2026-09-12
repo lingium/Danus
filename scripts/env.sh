@@ -49,6 +49,13 @@ export DANUS_CHROME_BIN="${DANUS_CHROME_BIN:-}"        # headless Chrome/Chromiu
 export CODEX_BACKEND="${CODEX_BACKEND:-api}"            # api (BYO key) | chatgpt (your login)
 
 # 4) PATH: bin wrappers first, then the provisioned node + venv (if bootstrapped)
+if [ -z "${DANUS_VENV:-}" ] && [ -d "$DANUS_ROOT/runtime/venv" ]; then
+  export DANUS_VENV="$DANUS_ROOT/runtime/venv"
+fi
+if [ -n "${DANUS_VENV:-}" ] && [ ! -x "$DANUS_VENV/bin/python" ]; then
+  echo "Danus: configured venv is unavailable: $DANUS_VENV (rerun bootstrap)" >&2
+  return 1
+fi
 _danus_path="$DANUS_ROOT/bin"
 [ -n "${DANUS_NODE_BIN:-}" ] && [ -d "$DANUS_NODE_BIN" ] && _danus_path="$_danus_path:$DANUS_NODE_BIN"
 [ -n "${DANUS_VENV:-}" ]     && [ -d "$DANUS_VENV/bin" ] && _danus_path="$_danus_path:$DANUS_VENV/bin"

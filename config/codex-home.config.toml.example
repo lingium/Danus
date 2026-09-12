@@ -1,0 +1,42 @@
+# Default configuration for the isolated Danus CODEX_HOME on macOS.
+# Main-agent model/review_model/model_reasoning_effort belong in .codex/config.toml.
+# bin/codex generates the repository trust entry and workspace root at launch.
+
+approval_policy = "never"
+default_permissions = "danus-only"
+suppress_unstable_features_warning = true
+
+[features]
+network_proxy = true
+
+[permissions.danus-only]
+
+[permissions.danus-only.filesystem]
+":root" = "deny"
+":minimal" = "read"
+":tmpdir" = "deny"
+":slash_tmp" = "deny"
+
+# Host Codex and its runtime dependencies are installed under Homebrew.
+"/opt/homebrew" = "read"
+
+[permissions.danus-only.filesystem.":workspace_roots"]
+"." = "write"
+
+# Keep repository metadata and local Codex configuration read-only.
+".git" = "read"
+".codex" = "read"
+"runtime/bin" = "read"
+
+# Keep credentials and the isolated Codex configuration out of shell access.
+"runtime/codex-home" = "deny"
+"config/codex.env" = "deny"
+
+[permissions.danus-only.network]
+enabled = true
+allow_local_binding = true
+
+[permissions.danus-only.network.domains]
+"*" = "allow"
+"localhost" = "allow"
+"127.0.0.1" = "allow"

@@ -66,9 +66,31 @@ state machine, not a suggestion:
 If the verify service is unreachable, `fact_submit` returns a clean error and
 writes nothing — nothing is silently accepted.
 
-## 4. The verifier runs with the sandbox bypassed — trust its home and isolate the host
+## 4. Host permissions and the worker launch boundary
 
-The worker and verifier `codex` sessions are launched with
+On macOS, top-level `bin/codex` removes the legacy bypass flag and uses the
+`danus-only` permission profile. Worker and verifier subprocesses launched by a
+sandboxed main agent inherit that sandbox; detaching does not remove it. The
+profile permits all repository files for read/write, including the isolated
+Danus Codex home for login/session/cache I/O and local policy configuration.
+Outside effective workspace roots, files are read-only. This is the operator's
+explicit boundary; task processes can read credentials, so trusted prompts and
+tools remain necessary. Restart the main session after changing its permissions.
+
+macOS rejects a second Seatbelt application. `scripts/codex-sandbox.py` asks the
+OS whether the process is already sandboxed. Only when that check succeeds does
+`bin/codex` skip Codex's additional sandbox, leaving the inherited OS restrictions
+in force. A `danger-full-access` label in such a nested Codex describes its own
+additional sandbox, not unrestricted host access. Explicit `--sandbox` requests
+are preserved; the wrapper does not silently weaken a requested read-only mode.
+
+The three local Danus MCP servers preapprove calls under the non-interactive
+`never` approval policy. The role table and verifier write-gate still apply;
+approvals for unrelated MCP servers are unchanged. MCP approval is separate
+from shell filesystem permissions: agent-directed artifact paths must also stay
+inside the repository.
+
+On the Linux launch path, worker and verifier `codex` sessions are launched with
 `--dangerously-bypass-approvals-and-sandbox`. This is required for autonomous
 operation, and it means Danus's host-level safety rests on two assumptions you must
 uphold:

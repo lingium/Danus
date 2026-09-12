@@ -66,6 +66,9 @@ _CODEX_CONFIG = """\
 [mcp_servers.danus]
 command = {python}
 args = ["-m", "danus.gateway"]
+# This role exposes only the five authorized research operations. fact_submit
+# still goes through the verifier; Codex approval is a separate runtime gate.
+default_tools_approval_mode = "approve"
 # fact_submit blocks on the verify service (a cold-started codex that can reason
 # for minutes on a hard proof); codex's default tool-call timeout is 120s, which
 # would abort those legitimate long verifications. Match the verify HTTP timeout.

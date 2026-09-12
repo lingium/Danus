@@ -18,11 +18,12 @@
 - **Notifications:** 未指定
 - **Spend ceiling (paid backend API):** 不适用（使用 ChatGPT subscription 后端）
 - **worker roster:** `high:3,xhigh:4`（每个项目在 `danus new` 时确认）
+- **本机文件与审批边界：** Danus 主工作目录内允许读写，目录外允许读取、禁止修改；本地 Danus MCP 操作自动批准，保留 verifier 的事实写入门槛
 
 ## Per-project pointers
 _(One line per live project → where its durable facts live. The project's own
 problem lives under `runtime/projects/<project>/PROBLEM.md`, not here.)_
 
 ## Notes
-- Codex backend：自己的 ChatGPT subscription。
-- Git 工作分支：`deploy/lingzhi`。
+- Codex backend：自己的 ChatGPT subscription
+- Git 工作分支：`deploy/lingzhi`

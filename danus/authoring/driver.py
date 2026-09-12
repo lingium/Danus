@@ -62,6 +62,7 @@ def _gateway_config_arg(gateway_role: str) -> str:
     define a new gateway role for the paper verifier."""
     return (
         'mcp_servers.danus={command="python3",args=["-m","danus.gateway"],'
+        'default_tools_approval_mode="approve",'
         f'env={{DANUS_ROLE="{gateway_role}"}}}}'
     )
 

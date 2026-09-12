@@ -34,6 +34,8 @@ sleep_tool = true
 command = "./bin/danus-mcp"
 cwd = "."
 tool_timeout_sec = 100000
+# Operator authorizes local Danus tools without interactive approval.
+default_tools_approval_mode = "approve"
 
 [mcp_servers.danus.env]
 DANUS_ROLE = "main"
@@ -43,6 +45,7 @@ DANUS_VERIFY_TIMEOUT = "90000"
 [mcp_servers.write-paper]
 command = "./bin/write-paper-mcp"
 cwd = "."
+default_tools_approval_mode = "approve"
 # The isolated authoring/verifier subprocess has a generous 86400s budget. Keep
 # the MCP envelope wider so long-paper verification returns its own honest
 # verdict/timeout instead of being cut off by the main-agent client.
@@ -57,6 +60,7 @@ DANUS_PAPER_VERIFY_WHOLE_DOC_CAP = "2000000"
 [mcp_servers.human-summary]
 command = "./bin/human-summary-mcp"
 cwd = "."
+default_tools_approval_mode = "approve"
 tool_timeout_sec = 100000
 
 [mcp_servers.human-summary.env]

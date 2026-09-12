@@ -155,17 +155,22 @@ def test_subprocess_env_idempotent_when_dir_already_on_path():
 
 def test_exec_cmd_shape_quoted_effort_and_verbatim_tail():
     cmd = codex.exec_cmd("/x/codex", "the-model", "xhigh", "-C", "/home", "-")
-    assert cmd == [
+    assert cmd[:6] == [
         "/x/codex", "exec",
         "--model", "the-model",
         "--config", 'model_reasoning_effort="xhigh"',
-        "-C", "/home", "-",
     ]
+    assert cmd[-3:] == ["-C", "/home", "-"]
+    assert len(cmd[6:-3]) == 4
+    for name, override in zip(("write-paper", "human-summary"), cmd[7:-3:2]):
+        assert override.startswith(f'mcp_servers.{name}={{command=')
+        assert override.endswith(',enabled=false}')
 
 
 def test_exec_cmd_empty_tail():
     cmd = codex.exec_cmd("codex", "m", "e")
-    assert cmd == ["codex", "exec", "--model", "m", "--config", 'model_reasoning_effort="e"']
+    assert cmd[:6] == ["codex", "exec", "--model", "m", "--config", 'model_reasoning_effort="e"']
+    assert len(cmd) == 10  # two disabled main-only MCP server overrides
 
 
 # --- per-project worker API override (opt-in, fail-closed) ------------------ #

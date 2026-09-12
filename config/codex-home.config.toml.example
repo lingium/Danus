@@ -12,10 +12,8 @@ network_proxy = true
 [permissions.danus-only]
 
 [permissions.danus-only.filesystem]
-":root" = "deny"
+":root" = "read"
 ":minimal" = "read"
-":tmpdir" = "deny"
-":slash_tmp" = "deny"
 
 # Host Codex and its runtime dependencies are installed under Homebrew.
 "/opt/homebrew" = "read"
@@ -23,14 +21,11 @@ network_proxy = true
 [permissions.danus-only.filesystem.":workspace_roots"]
 "." = "write"
 
-# Keep repository metadata and local Codex configuration read-only.
-".git" = "read"
-".codex" = "read"
-"runtime/bin" = "read"
-
-# Keep credentials and the isolated Codex configuration out of shell access.
-"runtime/codex-home" = "deny"
-"config/codex.env" = "deny"
+# Operator policy: repository files are writable, including local configuration;
+# everything outside effective workspace roots remains read-only. Nested Codex
+# processes inherit this profile and need login/session/cache access in runtime/.
+".git" = "write"
+".codex" = "write"
 
 [permissions.danus-only.network]
 enabled = true

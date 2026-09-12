@@ -207,14 +207,26 @@ def subprocess_env(codex_bin: str, *, worker_project: Optional[str] = None) -> D
 def exec_cmd(codex_bin: str, model: str, effort: str, *tail: str) -> List[str]:
     """The uniform ``codex exec`` command prefix + the caller's exact tail.
 
+    Disables inherited main-only authoring MCP servers in background sessions:
+    workers/verifiers must not launch those services from their own cwd or
+    recursively acquire the main agent's authoring tools. Include a transport
+    even when disabled: Codex validates it before checking ``enabled``.
+
     Standardizes on the QUOTED reasoning-effort config form
     (``model_reasoning_effort="<effort>"``). The ``*tail`` is passed through
     verbatim (each site keeps its own exact tail: sandbox flags, ``-C`` home,
     MCP ``-c`` injection, output path, the ``-`` stdin sentinel, the prompt, …).
     """
+    main_only_mcp = []
+    for server in ("write-paper", "human-summary"):
+        command = json.dumps(str(_REPO_ROOT / "bin" / f"{server}-mcp"))
+        main_only_mcp += [
+            "--config", f"mcp_servers.{server}={{command={command},enabled=false}}",
+        ]
     return [
         codex_bin, "exec",
         "--model", model,
         "--config", f'model_reasoning_effort="{effort}"',
+        *main_only_mcp,
         *tail,
     ]

@@ -89,6 +89,28 @@ On first setup, `scripts/bootstrap-mac.sh` copies
 contains no model settings or deployment paths. Existing configurations are
 preserved when bootstrap is rerun. Path refreshes preserve unrelated tables
 written by Codex, including UI state.
+
+The main agent's shell-launched workers inherit its macOS sandbox, including
+after they detach. The isolated `runtime/codex-home` must be accessible for login
+state and writable for sessions/cache. Denying the entire home prevents
+`bin/codex` from starting. The operator's profile allows repository reads/writes
+(including local configuration and login state), and read-only access outside
+effective workspace roots. `bin/codex` puts temporary files under `runtime/tmp`.
+macOS cannot apply Seatbelt twice. When the OS confirms that a Codex subprocess
+already has an inherited sandbox, the wrapper skips Codex's second sandbox;
+the parent OS boundary remains enforced. Top-level launches keep `danus-only`,
+and environment variables alone cannot select this nested-process behavior.
+The three local Danus MCP servers are preapproved, so
+`approval_policy = "never"` does not reject `gm_search`, `fact_search`, `gm_add`,
+or verifier-gated `fact_submit`. This does not grant new gateway roles or bypass
+the verifier. Other MCP servers retain their own approval settings.
+The shared background `codex exec` launcher disables inherited `write-paper`
+and `human-summary` MCP servers. Those belong to the interactive main agent;
+loading them in a worker/verifier cwd otherwise produces missing-command errors
+or exposes unnecessary main-only tools.
+After changing permissions, restart/resume the main Codex session before
+launching workers: an existing process retains its inherited sandbox.
+
 `runtime/runtime.env` expands repository paths from `$DANUS_ROOT` when sourced.
 An unavailable configured venv is an error, rather than a fallback to Conda or
 system Python. A Python venv itself is not portable: after moving the repository,

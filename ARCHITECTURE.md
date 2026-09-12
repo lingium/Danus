@@ -96,7 +96,9 @@ Danus/
 8. Clean author context. Any agent that produces an artifact for an outside
    audience (a paper, a human report) is a fresh isolated codex fed a scoped,
    machinery-free prompt, never the orchestrator's own contaminated window. It
-   cannot leak `fact_id`s or swarm vocabulary it never received.
+   cannot leak `fact_id`s or swarm vocabulary it never received. The shared
+   background Codex launcher disables inherited main-only `write-paper` and
+   `human-summary` MCP servers in workers, verifiers, and authoring sessions.
 
 ---
 

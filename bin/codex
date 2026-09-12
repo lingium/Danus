@@ -27,11 +27,16 @@ mkdir -p "$CODEX_HOME" "$TMPDIR"
 "$DANUS_PY" "$DANUS_ROOT/scripts/codex-paths.py" "$CODEX_HOME/config.toml" "$DANUS_ROOT"
 
 args=()
+explicit_sandbox=0
 while (($#)); do
   case "$1" in
     --dangerously-bypass-approvals-and-sandbox|\
     --dangerously-bypass-approvals-and-sandbox=*|\
     --yolo|--yolo=*)
+      ;;
+    --sandbox|--sandbox=*|-s|-s?*)
+      explicit_sandbox=1
+      args+=("$1")
       ;;
     *)
       args+=("$1")
@@ -44,6 +49,15 @@ done
 # The Python launcher supplies both settings for background `exec` sessions.
 if [ "${#args[@]}" -eq 0 ] || [[ "${args[0]}" == -* ]]; then
   cd "$DANUS_ROOT"
+fi
+
+# Seatbelt is inherited even by detached worker processes and cannot be applied
+# twice. Disable only Codex's second sandbox when the OS confirms one already
+# exists. All commands still inherit the parent's filesystem/network boundary.
+# Never infer this from CODEX_SANDBOX alone, and keep explicit sandbox requests.
+if [ "$explicit_sandbox" -eq 0 ] && \
+   "$DANUS_PY" "$DANUS_ROOT/scripts/codex-sandbox.py"; then
+  exec "$REAL_CODEX" --dangerously-bypass-approvals-and-sandbox "${args[@]}"
 fi
 
 exec "$REAL_CODEX" "${args[@]}"

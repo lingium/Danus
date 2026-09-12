@@ -215,7 +215,7 @@ def main(worker_dir: str) -> int:
 
     signal.signal(signal.SIGTERM, _on_term)
 
-    write_status(wl, state="running", round=0, started_at=time.time())
+    write_status(wl, state="running", round=0, started_at=time.time(), error=None)
     rnd = 0
     consec_fail = 0
     try:
